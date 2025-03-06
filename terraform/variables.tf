@@ -17,3 +17,7 @@ variable "aws_profile" {
   description = "AWS profile to use"
   default     = "default"
 }
+
+variable "lambda_runtime" {
+  default = "python3.13"
+}

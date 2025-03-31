@@ -15,7 +15,7 @@ CLIENT_ID = os.getenv("COGNITO_CLIENT_ID")
 cognito_client = boto3.client("cognito-idp", region_name=COGNITO_REGION)
 
 
-# Step 1: 发起 `initiate-auth` 请求
+# Step 1
 def initiate_auth(username):
     print("USER_POOL_ID:", USER_POOL_ID)
     response = cognito_client.initiate_auth(
@@ -27,7 +27,7 @@ def initiate_auth(username):
     return response["Session"]
 
 
-# Step 2: 用户输入 OTP 并验证
+# Step 2
 def respond_to_auth_challenge(username, otp, session):
     response = cognito_client.respond_to_auth_challenge(
         ClientId=CLIENT_ID,
@@ -41,7 +41,7 @@ def respond_to_auth_challenge(username, otp, session):
     return response
 
 
-# Step 3: 解码 ID Token 以获取用户信息
+# Step 3
 def get_cognito_public_keys():
     """ 获取 Cognito JWKS 公钥 """
     jwks_url = f"https://cognito-idp.{COGNITO_REGION}.amazonaws.com/{USER_POOL_ID}/.well-known/jwks.json"
@@ -54,7 +54,7 @@ def get_cognito_public_keys():
 
 
 def verify_id_token(id_token):
-    """ 验证 ID Token 是否有效 """
+    """ verify ID Token """
     public_keys = get_cognito_public_keys()
     unverified_header = jwt.get_unverified_header(id_token)
     kid = unverified_header['kid']
@@ -66,7 +66,7 @@ def verify_id_token(id_token):
     return decoded_token
 
 
-# Step 4: 通过 Refresh Token 刷新 Access Token
+# Step 4
 def refresh_auth(refresh_token):
     response = cognito_client.initiate_auth(
         ClientId=CLIENT_ID,

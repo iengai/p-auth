@@ -1,5 +1,5 @@
 import streamlit as st
-import utils.auth as auth
+import modules.auth as auth
 
 ROLES = [None, "Requester", "Responder", "Admin"]
 
@@ -11,7 +11,7 @@ def login_page():
         otp_verification()
     else:
         select_role()
-
+    login_as_admin()
 
 def login():
     st.title("Passwordless Login")
@@ -52,4 +52,11 @@ def select_role():
         st.session_state.role = role
         st.session_state.step = "succeed"
         st.session_state.logged_in = True
+        st.rerun()
+
+def login_as_admin():
+    if st.button("login as admin"):
+        st.session_state.logged_in = True
+        st.session_state.step = "success"
+        st.session_state.role = "Admin"
         st.rerun()

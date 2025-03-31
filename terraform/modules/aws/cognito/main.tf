@@ -3,7 +3,6 @@ variable "stage" {}
 
 variable "lambda_triggers" {}
 
-# todo passwordless sign-in is native supported. https://aws.amazon.com/jp/blogs/aws/improve-your-app-authentication-workflow-with-new-amazon-cognito-features/
 # change pauth_user_pool
 resource "aws_cognito_user_pool" "pauth_user_pool" {
   name = "${var.service}-${var.stage}-user-pool"
@@ -16,6 +15,10 @@ resource "aws_cognito_user_pool" "pauth_user_pool" {
     post_authentication            = var.lambda_triggers.post_auth
   }
 
+  # sign_in_policy {
+  #   allowed_first_auth_factors = ["EMAIL_OTP"]
+  # }
+
   username_attributes = ["email"]
   auto_verified_attributes = ["email"]
   mfa_configuration   = "OFF"
@@ -27,6 +30,14 @@ resource "aws_cognito_user_pool_client" "pauth_user_pool_client" {
   generate_secret = false
 
   explicit_auth_flows = ["CUSTOM_AUTH_FLOW_ONLY"]
+  # todo use aws native passwordless support : https://docs.aws.amazon.com/cognito/latest/developerguide/amazon-cognito-user-pools-authentication-flow-methods.html#amazon-cognito-user-pools-authentication-flow-methods-passwordless
+  #│ Error: updating Cognito User Pool (ap-northeast-1_KXaNM898u): operation error Cognito Identity Provider: UpdateUserPool, https response error StatusCode: 400, RequestID: 8fddc931-30c7-4b12-a96c-b55aa9b2afff, InvalidParameterException: Password should be configured as one of the allowed first auth factors.
+  #│
+  #│   with module.cognito.aws_cognito_user_pool.pauth_user_pool,
+  #│   on modules\aws\cognito\main.tf line 8, in resource "aws_cognito_user_pool" "pauth_user_pool":
+  #│    8: resource "aws_cognito_user_pool" "pauth_user_pool" {
+  # explicit_auth_flows = ["ALLOW_USER_AUTH"]
+
 }
 
 resource "aws_lambda_permission" "cognito_triggers" {

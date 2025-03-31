@@ -4,6 +4,12 @@
 https://github.com/aws-samples/amazon-cognito-passwordless-email-auth/tree/master/cognito
 
 ## cmds
+### terraform
+```
+cd terraform
+terraform plan -var-file="terraform.tfvars" # or -var-file="environments/dev/terraform.tfvars"
+```
+
 ### register
 ```
 aws cognito-idp sign-up \
